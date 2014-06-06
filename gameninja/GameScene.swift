@@ -48,10 +48,17 @@ class ActionLibrary {
     var fade_scale: SKAction!
     var death: SKAction!
     
+    // setup our hero
+    var ninja1 = SKTexture(imageNamed: "ninja_throw")
+    var ninja2 = SKTexture(imageNamed: "ninja")
+    var ninjaThrow: SKAction!
+    
+
     init(){
         rotate_tint = SKAction.group([moveBack, rotate, redtint])
         fade_scale = SKAction.group([fadeout, scale])
         death = SKAction.sequence([rotate_tint, fade_scale, remove])
+        ninjaThrow = SKAction.animateWithTextures([ninja1, ninja2], timePerFrame: 0.2)
     }
 }
 
@@ -195,15 +202,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         updateLastTimeUpate(timeSinceLast)
     }
     
+    override func touchesBegan(touches: NSSet!, withEvent event: UIEvent!) {
+        
+    }
+    
     override func touchesEnded(touches: NSSet!, withEvent event: UIEvent!) {
         
         self.runAction(actionLibrary.weaponSound)
+        player!.runAction(actionLibrary.ninjaThrow)
         
         let touch:UITouch = touches.anyObject() as UITouch
         let projectile = SKSpriteNode(imageNamed: "fire")
         let offset = touch.locationInNode(self).deltaTo(self.player!.position)
         
-        projectile.position = self.player!.position.translate(100, 0)
+        projectile.position = self.player!.position.translate(65, -40)
         let destination = projectile.position.addTo( offset.normalize().multiplyBy(2000) )
         let motion = SKAction.moveTo(destination, duration: 1.0)
         
