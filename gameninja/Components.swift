@@ -90,8 +90,6 @@ class CollisionComponent : Component {
     }
 }
 
-
-
 class DramaticDeath : Component {
 
     var action:()->()

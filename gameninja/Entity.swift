@@ -13,9 +13,9 @@ import SpriteKit
 // MARK: Entity ------------------------------------------
 
 class Entity {
-    var id:Int
+    var id:UInt
     
-    init(id:Int){
+    init(id:UInt){
         self.id = id
     }
 }
@@ -28,7 +28,7 @@ class Entity {
 class EntityManager {
 
     struct EntityId{
-        static var nextId = 0
+        static var lowestIdCreated:UInt = 0
     }
     
     var entites:NSMutableArray
@@ -39,8 +39,21 @@ class EntityManager {
         componentsByType = Dictionary<ComponentType,NSMutableDictionary>()
     }
     
+    func createEntityId() -> UInt {
+        if EntityId.lowestIdCreated < UInt.max {
+            return EntityId.lowestIdCreated++
+        } else {
+            for i in 1..UInt.max {
+                if !self.entites.containsObject(i) {
+                    return i
+                }
+            }
+        }
+        return 0
+    }
+    
     func createEntity() -> Entity {
-        let e = Entity(id: EntityId.nextId++)
+        let e = Entity(id: createEntityId())
         entites.addObject(e.id)
         return e
     }
@@ -73,7 +86,7 @@ class EntityManager {
         var matches = Entity[]()
         if let components = componentsByType[type] as? NSMutableDictionary {
             for eid : AnyObject in components.allKeys {
-                matches.append(Entity(id: eid as Int))
+                matches.append(Entity(id: eid as UInt))
             }
         }
         return matches
