@@ -75,6 +75,12 @@ extension CGPoint{
     func translateX(x: CGFloat) -> CGPoint {
         return CGPointMake(self.x + x, self.y)
     }
+    func xAxis() -> CGPoint {
+        return CGPointMake(0, self.y)
+    }
+    func yAxis() -> CGPoint {
+        return CGPointMake(self.x, 0)
+    }
     func translateY(y: CGFloat) -> CGPoint {
         return CGPointMake(self.x, self.y + y)
     }
@@ -87,6 +93,7 @@ extension CGPoint{
     func multiplyBy(value:CGFloat) -> CGPoint{
         return CGPointMake(self.x*value, self.y*value)
     }
+    
     func length() -> CGFloat {
         return CGFloat(sqrt(CDouble(
                 self.x*self.x + self.y*self.y
@@ -111,80 +118,97 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let actionLibrary = ActionLibrary()
     var lastSpawnTimeInterval:CFTimeInterval = 0
     var lastUpdateTimeInterval:CFTimeInterval = 0
-    var player:SKSpriteNode? = nil
+
+    var player:Entity! = nil
+    var entityFactory:EntityFactory! = nil
+    var entityManager:EntityManager! = nil
+    
+    var motionSystem:MotionSystem! = nil
+    var physicsSystem:PhysicsSystem! = nil
+    var healthSystem:HealthSystem! = nil
+    
+    
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
+        entityManager = EntityManager()
         
-        self.backgroundColor = UIColor.whiteColor()
+        motionSystem = MotionSystem(entityManager: entityManager)
+        physicsSystem = PhysicsSystem(entityManager: entityManager)
+        healthSystem = HealthSystem(entityManager: entityManager)
+        
+        entityFactory = EntityFactory(entityManager: entityManager, scene: self)
+
 
         // add the player
-        let player = SKSpriteNode(imageNamed: "ninja")
-        player.size = CGSizeMake(128,128)
-        player.xScale = -1
-        player.position = CGPointMake(player.size.width, self.frame.height/2)
-        
-        self.player = player
-        self.addChild(player)
-        
+        player = entityFactory.createPlayer()
         
         // setup physics
         self.physicsWorld.gravity = CGVectorMake(0, 0)
-        self.physicsWorld.contactDelegate = self
+        self.physicsWorld.contactDelegate = physicsSystem
+    
     }
     
-    
-    func addMonster() {
-        
-        let typeMonster = generator.random()<0.7
-        let monster = SKSpriteNode(imageNamed:  typeMonster ? "monster" : "robot")
-        monster.size = CGSizeMake(128,128)
-        
-        // initial position 
-        // towards right edge of player
-        let (w,h) = (Double(self.frame.width), Double(self.frame.height))
-        let (x,y) =
-        (
-            w + 256,
-            Double(arc4random()) % h
-        )
-        monster.position = CGPointMake(CGFloat(x), CGFloat(y))
-        
-        let actionMonsterMove = SKAction.moveTo(
-            player!.position,
-            duration: self.frame.width / (generator.random()*50 + 150)
-        )
-        let actionRobotMove = SKAction.moveTo(
-            monster.position.translateX(-100),
-            duration: self.frame.width / (generator.random()*50 + 150)
-        )
-
-        let actionLose = SKAction.runBlock(){
-            let reveal = SKTransition.flipHorizontalWithDuration(0.5)
-            let gameOverScene = GameOverScene(size: self.size, won: false)
-            self.view.presentScene(gameOverScene, transition: reveal)
-            }
-        
-        //monster.runAction(SKAction.sequence([actionMove, actionLose, actionRemove]))
-        if typeMonster { monster.runAction(SKAction.sequence([actionMonsterMove, actionLibrary.remove])) }
-        else { monster.runAction(SKAction.sequence([actionRobotMove, actionLibrary.remove])) }
-        
-        // monster physics
-        monster.physicsBody = SKPhysicsBody(rectangleOfSize: monster.size.reduceBy(0.8))
-        monster.physicsBody.dynamic = true
-        monster.physicsBody.categoryBitMask = PhysicsCategory.Monster
-        monster.physicsBody.contactTestBitMask = PhysicsCategory.Projectile
-        monster.physicsBody.collisionBitMask = PhysicsCategory.None
-        
-        self.addChild(monster)
-    }
+//    
+//    func addMonster() {
+//        
+//        let typeMonster = generator.random()<0.7
+//        let monster = SKSpriteNode(imageNamed:  typeMonster ? "monster" : "robot")
+//        monster.size = CGSizeMake(128,128)
+//        
+//        // initial position 
+//        // towards right edge of player
+//        let (w,h) = (Double(self.frame.width), Double(self.frame.height))
+//        let (x,y) =
+//        (
+//            w + 256,
+//            Double(arc4random()) % h
+//        )
+//        monster.position = CGPointMake(CGFloat(x), CGFloat(y))
+//        monster.zPosition = -monster.position.y
+//        
+//        let actionMonsterMove = SKAction.moveTo(
+//            player!.position,
+//            duration: self.frame.width / (generator.random()*50 + 150)
+//        )
+//        let actionRobotMove = SKAction.moveTo(
+//            player!.position,
+//            duration: self.frame.width / (generator.random()*50 + 150)
+//        )
+//
+//        let actionLose = SKAction.runBlock(){
+//            let reveal = SKTransition.flipHorizontalWithDuration(0.5)
+//            let gameOverScene = GameOverScene(size: self.size, won: false)
+//            self.view.presentScene(gameOverScene, transition: reveal)
+//            }
+//        
+//        //monster.runAction(SKAction.sequence([actionMove, actionLose, actionRemove]))
+//        if typeMonster { monster.runAction(SKAction.sequence([actionMonsterMove, actionLibrary.remove])) }
+//        else { monster.runAction(SKAction.sequence([actionRobotMove, actionLibrary.remove])) }
+//        
+//        // monster physics
+//        monster.physicsBody = SKPhysicsBody(rectangleOfSize: monster.size.reduceBy(0.8))
+//        monster.physicsBody.dynamic = true
+//        monster.physicsBody.categoryBitMask = PhysicsCategory.Monster
+//        monster.physicsBody.contactTestBitMask = PhysicsCategory.Projectile
+//        monster.physicsBody.collisionBitMask = PhysicsCategory.None
+//        
+//        self.addChild(monster)
+//    }
     
     
     func updateLastTimeUpate(time: CFTimeInterval){
         lastSpawnTimeInterval += time
         if lastSpawnTimeInterval > 1 {
             lastSpawnTimeInterval = 0
-            addMonster()
+            
+            // add a monster every 1 second
+            let monster = entityFactory.createMonster()
+            
+            // modify target location based on players location
+            let motion = entityManager.getComponentForEntity(monster, type: ComponentType.Motion) as MotionComponent
+            let position = (entityManager.getComponentForEntity(player, type: ComponentType.Render) as RenderComponent).node.position
+            motion.targetPosition = position
         }
     }
     
@@ -200,60 +224,68 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.lastUpdateTimeInterval = currentTime;
         }
         updateLastTimeUpate(timeSinceLast)
+        
+        motionSystem.update(currentTime)
+        physicsSystem.update(currentTime)
+        healthSystem.update(currentTime)
     }
     
-    override func touchesBegan(touches: NSSet!, withEvent event: UIEvent!) {
-        
-    }
     
     override func touchesEnded(touches: NSSet!, withEvent event: UIEvent!) {
         
-        self.runAction(actionLibrary.weaponSound)
-        player!.runAction(actionLibrary.ninjaThrow)
+//        self.runAction(actionLibrary.weaponSound)
+//        player!.runAction(actionLibrary.ninjaThrow)
+//        
+//        let touch:UITouch = touches.anyObject() as UITouch
+//        let projectile = SKSpriteNode(imageNamed: "fire")
+//        
+//        
+//        projectile.position = self.player!.position.translate(65, -40)
+//        let offset = touch.locationInNode(self).deltaTo(projectile.position)
+//        let destination = projectile.position.addTo( offset.normalize().multiplyBy(2000) )
+//        let motion = SKAction.moveTo(destination, duration: 1.0)
+//        
+//        projectile.physicsBody = SKPhysicsBody(rectangleOfSize: projectile.size)
+//        projectile.physicsBody.dynamic = true
+//        projectile.physicsBody.categoryBitMask = PhysicsCategory.Projectile;
+//        projectile.physicsBody.contactTestBitMask = PhysicsCategory.Monster;
+//        projectile.physicsBody.collisionBitMask = PhysicsCategory.None;
+//        projectile.physicsBody.usesPreciseCollisionDetection = true;
+//
+//        
+//        self.addChild(projectile)
+//        projectile.runAction(SKAction.sequence([motion, actionLibrary.remove]))
         
-        let touch:UITouch = touches.anyObject() as UITouch
-        let projectile = SKSpriteNode(imageNamed: "fire")
-        let offset = touch.locationInNode(self).deltaTo(self.player!.position)
-        
-        projectile.position = self.player!.position.translate(65, -40)
-        let destination = projectile.position.addTo( offset.normalize().multiplyBy(2000) )
-        let motion = SKAction.moveTo(destination, duration: 1.0)
-        
-        projectile.physicsBody = SKPhysicsBody(rectangleOfSize: projectile.size)
-        projectile.physicsBody.dynamic = true
-        projectile.physicsBody.categoryBitMask = PhysicsCategory.Projectile;
-        projectile.physicsBody.contactTestBitMask = PhysicsCategory.Monster;
-        projectile.physicsBody.collisionBitMask = PhysicsCategory.None;
-        projectile.physicsBody.usesPreciseCollisionDetection = true;
-
-        
-        self.addChild(projectile)
-        projectile.runAction(SKAction.sequence([motion, actionLibrary.remove]))
     }
     
     
     func didBeginContact(contact: SKPhysicsContact!){
         
-        var monster: SKNode!
-        var projectile: SKNode!
-        
-        switch (contact.bodyA.categoryBitMask, contact.bodyB.categoryBitMask){
-        case let(a,b) where (a==PhysicsCategory.Projectile && b==PhysicsCategory.Monster):
-            monster = contact.bodyB.node
-            projectile = contact.bodyA.node
-        case let (a,b) where  (a==PhysicsCategory.Monster && b==PhysicsCategory.Projectile):
-            monster = contact.bodyA.node
-            projectile = contact.bodyB.node
-        default:
-                break
-        }
-        
-        projectile.removeFromParent()
-        
-        monster.removeAllActions()
-        monster.physicsBody.categoryBitMask = PhysicsCategory.None
-        monster.physicsBody.contactTestBitMask = PhysicsCategory.None
-        monster.runAction(actionLibrary.death)
-        
+//        var monster: SKNode!
+//        var projectile: SKNode!
+//        
+//        switch (contact.bodyA.categoryBitMask, contact.bodyB.categoryBitMask){
+//        case let(a,b) where (a==PhysicsCategory.Projectile && b==PhysicsCategory.Monster):
+//            monster = contact.bodyB.node
+//            projectile = contact.bodyA.node
+//        case let (a,b) where  (a==PhysicsCategory.Monster && b==PhysicsCategory.Projectile):
+//            monster = contact.bodyA.node
+//            projectile = contact.bodyB.node
+//        default:
+//                break
+//        }
+//        
+//        
+//        if projectile {
+//            projectile.removeFromParent()
+//        }
+//        
+//        if monster {
+//            monster.zPosition = -10_000.0
+//            monster.removeAllActions()
+//            monster.physicsBody.categoryBitMask = PhysicsCategory.None
+//            monster.physicsBody.contactTestBitMask = PhysicsCategory.None
+//            monster.runAction(actionLibrary.death)
+//        }
     }
 }

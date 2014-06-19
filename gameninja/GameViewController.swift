@@ -57,6 +57,7 @@ class GameViewController: UIViewController {
 //        musicPlayer = AVAudioPlayer(contentsOfURL: music, error: nil)
 //        musicPlayer.numberOfLoops = -1; // forever
 //        musicPlayer.prepareToPlay()
+//        musicPlayer.volume = 0.5
 //        musicPlayer.play()
 //    }
     
