@@ -18,6 +18,8 @@ enum ComponentType {
     case Motion
     case Collision
     case SpecialDeath
+    case HealthDecay
+    case HealthBar
 }
 
 class Component {
@@ -37,13 +39,13 @@ class RenderComponent : Component {
 
 class MotionComponent : Component {
     
-    var frame:CGRect
-    var targetPosition:CGPoint
+    var destination:CGPoint
+    var speed:Double
     var inMotion = false
     
-    init(targetPosition:CGPoint, frame:CGRect) {
-        self.targetPosition = targetPosition
-        self.frame = frame
+    init(destination:CGPoint, speed:Double) {
+        self.destination = destination
+        self.speed = speed
         super.init(type: ComponentType.Motion)
     }
     
@@ -54,6 +56,8 @@ class HealthComponent : Component {
     var isAlive:Bool
     var currentHealth:Double
     var maxHealth:Double
+    
+    var percent:Double { return currentHealth/maxHealth }
     
     init(currentHealth:Double, maxHealth:Double){
         self.currentHealth = currentHealth
@@ -100,6 +104,20 @@ class DramaticDeath : Component {
     }
 }
 
+class HealthDecayComponent : Component {
+    var factor:Double
+    
+    init(factor:Double){
+        self.factor = factor
+        super.init(type: ComponentType.HealthDecay)
+    }
+}
+
+class RenderHealthBarComponent : Component {
+    init() {
+        super.init(type: ComponentType.HealthBar)
+    }
+}
 
 
 

@@ -23,7 +23,7 @@ class GameScene: SKScene {
     var motionSystem:MotionSystem! = nil
     var physicsSystem:PhysicsSystem! = nil
     var healthSystem:HealthSystem! = nil
-    
+    var renderSystem:RenderSystem! = nil
     
     
     override func didMoveToView(view: SKView) {
@@ -33,6 +33,7 @@ class GameScene: SKScene {
         motionSystem = MotionSystem(entityManager: entityManager)
         physicsSystem = PhysicsSystem(entityManager: entityManager)
         healthSystem = HealthSystem(entityManager: entityManager)
+        renderSystem = RenderSystem(entityManager: entityManager)
         
         entityFactory = EntityFactory(entityManager: entityManager, scene: self)
 
@@ -52,7 +53,6 @@ class GameScene: SKScene {
         if lastSpawnTimeInterval > 1 {
             lastSpawnTimeInterval = 0
             spawnMonster()
-
         }
     }
     
@@ -64,9 +64,9 @@ class GameScene: SKScene {
         let motion = entityManager.getComponent(monster, type: ComponentType.Motion) as MotionComponent
         let monsterNode = entityManager.getComponent(monster, type: ComponentType.Render) as RenderComponent
         if let playerNode = (entityManager.getComponent(player, type: ComponentType.Render) as? RenderComponent) {
-            motion.targetPosition = playerNode.node.position
+            motion.destination = playerNode.node.position
         } else {
-            motion.targetPosition = monsterNode.node.position.xAxis()
+            motion.destination = monsterNode.node.position.xAxis()
         }
     }
     
@@ -83,32 +83,32 @@ class GameScene: SKScene {
         }
         updateLastTimeUpate(timeSinceLast)
         
-        motionSystem.update(currentTime)
-        physicsSystem.update(currentTime)
-        healthSystem.update(currentTime)
+        motionSystem.update(timeSinceLast)
+        physicsSystem.update(timeSinceLast)
+        healthSystem.update(timeSinceLast)
+        renderSystem.update(timeSinceLast)
     }
     
     
     override func touchesEnded(touches: NSSet!, withEvent event: UIEvent!) {
-
-        let touch:UITouch = touches.anyObject() as UITouch
-        let fire = self.entityFactory.createFire()
-        
-        let fireNode = self.entityManager.getComponent(fire, type: ComponentType.Render) as RenderComponent
-        let playerNode = self.entityManager.getComponent(player, type: ComponentType.Render) as RenderComponent
-        let fireHealth = self.entityManager.getComponent(fire, type: ComponentType.Health) as HealthComponent
-        
-        fireNode.node.position = playerNode.node.position.translate(65, -40)
-        
-        let offset = touch.locationInNode(self).deltaTo(fireNode.node.position)
-        let destination = fireNode.node.position.addTo( offset.normalize().multiplyBy(2000) )
-        
-        let move = SKAction.moveTo(destination, duration: 1.0)
-        let die = SKAction.runBlock { fireHealth.currentHealth = 0.0 }
-        
-        playerNode.node.runAction(actionLibrary.ninjaThrow)
-        fireNode.node.runAction(actionLibrary.weaponSound)
-        fireNode.node.runAction(SKAction.sequence([move, die]))
+        let playerNode = self.entityManager.getComponent(player, type: ComponentType.Render) as? RenderComponent
+        if playerNode {
+            let touch:UITouch = touches.anyObject() as UITouch
+            let fire = self.entityFactory.createFire()
+            
+            let fireNode = self.entityManager.getComponent(fire, type: ComponentType.Render) as RenderComponent
+            
+            let fireHealth = self.entityManager.getComponent(fire, type: ComponentType.Health) as HealthComponent
+            let fireMotion = self.entityManager.getComponent(fire, type: ComponentType.Motion) as MotionComponent
+            
+            fireNode.node.position = playerNode!.node.position.translate(65, -40)
+            let offset = touch.locationInNode(self).deltaTo(fireNode.node.position)
+            let destination = fireNode.node.position.addTo( offset.normalize().multiplyBy(1000) )
+            fireMotion.destination = destination
+            
+            playerNode!.node.runAction(actionLibrary.ninjaThrow)
+            self.runAction(actionLibrary.weaponSound)
+        }
     }
     
     

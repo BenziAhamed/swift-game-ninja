@@ -13,6 +13,7 @@
 		B98CF6C51953474500193884 /* Systems.swift in Sources */ = {isa = PBXBuildFile; fileRef = B98CF6C41953474500193884 /* Systems.swift */; };
 		B98CF6C71953478400193884 /* EntityFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B98CF6C61953478400193884 /* EntityFactory.swift */; };
 		B98CF6C919535A6D00193884 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B98CF6C819535A6C00193884 /* Extensions.swift */; };
+		B98CF6CC19536EBD00193884 /* GameSpriteNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B98CF6CB19536EBD00193884 /* GameSpriteNode.swift */; };
 		B99B927E19533A8300EE9F39 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99B927D19533A8300EE9F39 /* Components.swift */; };
 		B99DF79E1940761900745CE9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99DF79D1940761900745CE9 /* AppDelegate.swift */; };
 		B99DF7A01940761900745CE9 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = B99DF79F1940761900745CE9 /* GameScene.sks */; };
@@ -41,6 +42,7 @@
 		B98CF6C41953474500193884 /* Systems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Systems.swift; sourceTree = "<group>"; };
 		B98CF6C61953478400193884 /* EntityFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityFactory.swift; sourceTree = "<group>"; };
 		B98CF6C819535A6C00193884 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		B98CF6CB19536EBD00193884 /* GameSpriteNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameSpriteNode.swift; sourceTree = "<group>"; };
 		B99B927D19533A8300EE9F39 /* Components.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		B99DF7981940761900745CE9 /* gameninja.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = gameninja.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B99DF79C1940761900745CE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -85,6 +87,14 @@
 			name = EntityModel;
 			sourceTree = "<group>";
 		};
+		B98CF6CA19536E7A00193884 /* GameNodes */ = {
+			isa = PBXGroup;
+			children = (
+				B98CF6CB19536EBD00193884 /* GameSpriteNode.swift */,
+			);
+			name = GameNodes;
+			sourceTree = "<group>";
+		};
 		B99DF78F1940761800745CE9 = {
 			isa = PBXGroup;
 			children = (
@@ -106,6 +116,7 @@
 		B99DF79A1940761900745CE9 /* gameninja */ = {
 			isa = PBXGroup;
 			children = (
+				B98CF6CA19536E7A00193884 /* GameNodes */,
 				B962FEA51952DD5B00FBA15E /* EntityModel */,
 				B99DF79D1940761900745CE9 /* AppDelegate.swift */,
 				B99DF7A11940761900745CE9 /* GameScene.swift */,
@@ -251,6 +262,7 @@
 			files = (
 				B99DF7A21940761900745CE9 /* GameScene.swift in Sources */,
 				B98CF6C919535A6D00193884 /* Extensions.swift in Sources */,
+				B98CF6CC19536EBD00193884 /* GameSpriteNode.swift in Sources */,
 				B962FEA71952DD7700FBA15E /* Entity.swift in Sources */,
 				B99DF7A41940761900745CE9 /* GameViewController.swift in Sources */,
 				B98CF6C71953478400193884 /* EntityFactory.swift in Sources */,

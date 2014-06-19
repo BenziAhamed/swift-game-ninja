@@ -42,7 +42,7 @@ class EntityFactory {
         let renderComponent = RenderComponent(node: sprite)
         self.entityManager.addComponent(monster, c: renderComponent)
         
-        var motionComponent = MotionComponent(targetPosition: sprite.position.xAxis(), frame: scene.frame)
+        var motionComponent = MotionComponent(destination: sprite.position.xAxis(), speed: 200)
         self.entityManager.addComponent(monster, c: motionComponent)
         
         
@@ -53,12 +53,13 @@ class EntityFactory {
         self.entityManager.addComponent(monster, c: CollisionComponent(collisionRules: [collideWithPlayerRule]))
         
         let deathDrama = DramaticDeath() {
-            self.entityManager.removeEntity(monster)
             renderComponent.node.removeAllActions()
             renderComponent.node.physicsBody = nil
             renderComponent.node.runAction(self.scene.actionLibrary.death)
         }
         self.entityManager.addComponent(monster, c: deathDrama)
+        
+        self.entityManager.addComponent(monster, c: RenderHealthBarComponent())
         
         return monster
     }
@@ -77,16 +78,18 @@ class EntityFactory {
         sprite.physicsBody.collisionBitMask = PhysicsCategory.None
         sprite.physicsBody.contactTestBitMask = PhysicsCategory.Monster
         
+        
         let player = self.entityManager.createEntity()
         let renderComponent = RenderComponent(node: sprite)
         let health = HealthComponent(currentHealth: 100, maxHealth: 100)
-        
+
         let collideWithMonsterRule = CollisionRule(hitCategory:PhysicsCategory.Monster, damageGiven:0, damageSustained:10)
         self.entityManager.addComponent(player, c: CollisionComponent(collisionRules: [collideWithMonsterRule]))
 
         
         self.entityManager.addComponent(player, c: renderComponent)
         self.entityManager.addComponent(player, c: health)
+        self.entityManager.addComponent(player, c: RenderHealthBarComponent())
         return player
     }
     
@@ -104,14 +107,18 @@ class EntityFactory {
         
         let fire = self.entityManager.createEntity()
         let render = RenderComponent(node: sprite)
-        let collideWithMonsterRule = CollisionRule(hitCategory: PhysicsCategory.Monster, damageGiven:1000, damageSustained:1.0)
+        let collideWithMonsterRule = CollisionRule(hitCategory: PhysicsCategory.Monster, damageGiven:5, damageSustained:1.0)
         let collision = CollisionComponent(collisionRules: [collideWithMonsterRule])
         
         let health = HealthComponent(currentHealth: 1.0, maxHealth: 1.0)
+        let decay = HealthDecayComponent(factor: 0.1)
+        let motion = MotionComponent(destination: render.node.position, speed:250)
         
         self.entityManager.addComponent(fire, c: render)
         self.entityManager.addComponent(fire, c: collision)
         self.entityManager.addComponent(fire, c: health)
+        self.entityManager.addComponent(fire, c: decay)
+        self.entityManager.addComponent(fire, c: motion)
         
         return fire
     }
