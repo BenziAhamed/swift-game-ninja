@@ -9,13 +9,45 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "gameninja/GameScene.swift"
-            timestampString = "423759845.672847"
+            filePath = "gameninja/Systems.swift"
+            timestampString = "424895268.97584"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "185"
-            endingLineNumber = "185"
-            landmarkName = "updateLastTimeUpate(_:)"
+            startingLineNumber = "68"
+            endingLineNumber = "68"
+            landmarkName = "applyCollision(_:hittee:hitteeCategory:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "gameninja/Systems.swift"
+            timestampString = "424895268.97584"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
+            landmarkName = "applyCollision(_:hittee:hitteeCategory:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "gameninja/EntityFactory.swift"
+            timestampString = "424895268.97584"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "109"
+            endingLineNumber = "109"
+            landmarkName = "createFire()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -26,12 +58,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "gameninja/GameScene.swift"
-            timestampString = "423759845.672847"
+            timestampString = "424895268.97584"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151"
-            endingLineNumber = "151"
-            landmarkName = "addMonster()"
+            startingLineNumber = "88"
+            endingLineNumber = "88"
+            landmarkName = "update(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -41,13 +73,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "gameninja/GameScene.swift"
-            timestampString = "423742217.141761"
+            filePath = "gameninja/Systems.swift"
+            timestampString = "424895268.97584"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "28"
-            endingLineNumber = "28"
-            landmarkName = "random()"
+            startingLineNumber = "106"
+            endingLineNumber = "106"
+            landmarkName = "update(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -57,14 +89,14 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "gameninja/GameScene.swift"
-            timestampString = "423680005.300294"
+            filePath = "gameninja/Entity.swift"
+            timestampString = "424891759.540426"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "14"
-            endingLineNumber = "14"
-            landmarkName = "PhysicsCategory"
-            landmarkType = "3">
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "removeEntity(_:)"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
